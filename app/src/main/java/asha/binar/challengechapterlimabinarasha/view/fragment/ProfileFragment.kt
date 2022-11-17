@@ -60,6 +60,7 @@ class ProfileFragment : Fragment() {
                     binding.imgWarn.visibility = View.VISIBLE
                 }else{
                     binding.imgWarn.visibility = View.INVISIBLE
+                    showList(fav)
                 }
             }
         }
@@ -77,7 +78,20 @@ class ProfileFragment : Fragment() {
         }
     }
 
-
+    private fun showList(listFavorite: List<Favorite>?) {
+        Log.d("listEmp", "list ${listFavorite.toString()}")
+        binding.rvFavorite.isNestedScrollingEnabled = false
+        binding.rvFavorite.layoutManager = GridLayoutManager(requireContext(), 3)
+        val adapter = FavoriteAdapter(object : FavoriteAdapter.OnClickListener {
+            override fun onClickItem(data: Favorite) {
+                viewModelMovie.id.postValue(data.idMovie)
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.action_profileFragment_to_detailFragment)
+            }
+        })
+        adapter.submitData(listFavorite)
+        binding.rvFavorite.adapter = adapter
+    }
 
     private fun convertStringToBitmap(string: String?): Bitmap? {
         val byteArray1: ByteArray = Base64.decode(string, Base64.DEFAULT)
